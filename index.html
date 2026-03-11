@@ -1,225 +1,48 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>News & Earn Platform</title>
-
-<style>
-
-body{
-font-family:Arial;
-margin:0;
-background:#f4f4f4;
-}
-
-header{
-background:#111;
-color:white;
-text-align:center;
-padding:20px;
-}
-
-#auth{
-text-align:center;
-padding:20px;
-}
-
-input{
-padding:10px;
-margin:5px;
-}
-
-button{
-padding:10px 15px;
-background:#007bff;
-border:none;
-color:white;
-border-radius:5px;
-cursor:pointer;
-}
-
-.points{
-position:fixed;
-top:20px;
-right:20px;
-background:black;
-color:white;
-padding:10px;
-border-radius:5px;
-}
-
-#news{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-gap:20px;
-padding:20px;
-}
-
-.card{
-background:white;
-border-radius:8px;
-overflow:hidden;
-box-shadow:0 2px 6px rgba(0,0,0,0.2);
-}
-
-.card img{
-width:100%;
-height:180px;
-object-fit:cover;
-}
-
-.card h3{
-padding:10px;
-}
-
-.card p{
-padding:0 10px 10px;
-}
-
-.card button{
-margin:10px;
-background:#28a745;
-}
-
-#dashboard{
-padding:20px;
-text-align:center;
-}
-
-.hidden{
-display:none;
-}
-
-</style>
-
-</head>
-
-<body>
-
-<header>
-<h1>📰 News & Earn Platform</h1>
-</header>
-
-<div class="points">
-Points: <span id="points">0</span>
-</div>
-
-<div id="auth">
-
-<h2>Signup</h2>
-
-<input id="signupEmail" placeholder="Email">
-<input id="signupPass" type="password" placeholder="Password">
-
-<button onclick="signup()">Signup</button>
-
-<h2>Login</h2>
-
-<input id="loginEmail" placeholder="Email">
-<input id="loginPass" type="password">
-
-<button onclick="login()">Login</button>
-
-</div>
-
-<div id="dashboard" class="hidden">
-
-<h2>Welcome <span id="userEmail"></span></h2>
-
-<input id="search" placeholder="Search news..." style="padding:10px;width:250px">
-
-<button onclick="dailyReward()">Daily Reward</button>
-
-</div>
-
-<div id="news"></div>
-
 <script>
 
-const apiKey="99b65368f09edc9972c44f8b9daf6106"
+const apiKey = "99b65368f09edc9972c44f8b9daf6106"
 
-let user=JSON.parse(localStorage.getItem("user"))
-
-let points=localStorage.getItem("points") || 0
-
-document.getElementById("points").innerText=points
-
-if(user){
-
-showDashboard()
-
-}
-
-function signup(){
-
-let email=document.getElementById("signupEmail").value
-let pass=document.getElementById("signupPass").value
-
-let user={email,pass}
-
-localStorage.setItem("user",JSON.stringify(user))
-
-alert("Account created!")
-
-}
-
-function login(){
-
-let email=document.getElementById("loginEmail").value
-let pass=document.getElementById("loginPass").value
-
-let user=JSON.parse(localStorage.getItem("user"))
-
-if(user && user.email==email && user.pass==pass){
-
-showDashboard()
-
-}else{
-
-alert("Wrong login")
-
-}
-
-}
-
-function showDashboard(){
-
-document.getElementById("auth").style.display="none"
-document.getElementById("dashboard").classList.remove("hidden")
-
-let user=JSON.parse(localStorage.getItem("user"))
-
-document.getElementById("userEmail").innerText=user.email
-
-loadNews()
-
-}
+let points = localStorage.getItem("points") || 0
+document.getElementById("points").innerText = points
 
 async function loadNews(){
 
-const url=`https://gnews.io/api/v4/top-headlines?lang=en&country=in&max=20&apikey=${apiKey}`
+const container = document.getElementById("news")
+container.innerHTML = "Loading news..."
 
-const res=await fetch(url)
+try{
 
-const data=await res.json()
+const url = `https://gnews.io/api/v4/top-headlines?country=in&lang=en&max=10&apikey=${apiKey}`
+
+const res = await fetch(url)
+const data = await res.json()
+
+if(!data.articles){
+container.innerHTML="API limit reached or invalid key"
+return
+}
 
 displayNews(data.articles)
+
+}catch(e){
+
+container.innerHTML="Error loading news"
+
+}
 
 }
 
 function displayNews(articles){
 
-const container=document.getElementById("news")
-
+const container = document.getElementById("news")
 container.innerHTML=""
 
 articles.forEach(article=>{
 
-const card=document.createElement("div")
-
+const card = document.createElement("div")
 card.className="card"
 
-card.innerHTML=`
+card.innerHTML = `
 
 <img src="${article.image || 'https://via.placeholder.com/300'}">
 
@@ -241,45 +64,16 @@ container.appendChild(card)
 
 }
 
-document.getElementById("search").addEventListener("keyup", async function(){
-
-let q=this.value
-
-if(q.length<3) return
-
-const url=`https://gnews.io/api/v4/search?q=${q}&lang=en&max=20&apikey=${apiKey}`
-
-const res=await fetch(url)
-
-const data=await res.json()
-
-displayNews(data.articles)
-
-})
-
 function earn(){
 
-points=parseInt(points)+5
+points = parseInt(points) + 5
 
-localStorage.setItem("points",points)
+localStorage.setItem("points", points)
 
-document.getElementById("points").innerText=points
-
-}
-
-function dailyReward(){
-
-points=parseInt(points)+20
-
-localStorage.setItem("points",points)
-
-document.getElementById("points").innerText=points
-
-alert("Daily reward +20 points!")
+document.getElementById("points").innerText = points
 
 }
+
+loadNews()
 
 </script>
-
-</body>
-</html>
