@@ -1,64 +1,68 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<title>News Reader</title>
+<title>News & Earn</title>
 
 <style>
 
 body{
-font-family: Arial;
-background:#f4f4f4;
+font-family:Arial;
 margin:0;
+background:#f4f4f4;
 }
 
 header{
-background:#222;
+background:#111;
 color:white;
 padding:15px;
 text-align:center;
 }
 
-#news-container{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
-gap:20px;
+.container{
 padding:20px;
+}
+
+input{
+padding:10px;
+margin:5px;
+}
+
+button{
+padding:10px 15px;
+background:#007bff;
+border:none;
+color:white;
+cursor:pointer;
+border-radius:5px;
 }
 
 .card{
 background:white;
 padding:15px;
+margin:10px;
 border-radius:8px;
 box-shadow:0 2px 5px rgba(0,0,0,0.2);
 }
 
-.card img{
-width:100%;
-border-radius:5px;
-}
-
-.card h3{
-font-size:18px;
-}
-
-button{
-background:#007BFF;
-color:white;
-border:none;
-padding:10px;
-cursor:pointer;
-border-radius:5px;
+#news{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+gap:20px;
 }
 
 .points{
 position:fixed;
-top:10px;
 right:20px;
+top:20px;
 background:black;
 color:white;
 padding:10px;
 border-radius:5px;
+}
+
+.hidden{
+display:none;
 }
 
 </style>
@@ -67,55 +71,149 @@ border-radius:5px;
 <body>
 
 <header>
-<h1>📰 News & Earn</h1>
+<h1>📰 News & Earn Website</h1>
 </header>
 
 <div class="points">
 Points: <span id="points">0</span>
 </div>
 
-<div id="news-container"></div>
+<div class="container">
+
+<div id="auth">
+
+<h2>Signup</h2>
+
+<input id="signupEmail" placeholder="Email">
+<input id="signupPassword" type="password" placeholder="Password">
+
+<button onclick="signup()">Signup</button>
+
+<h2>Login</h2>
+
+<input id="loginEmail" placeholder="Email">
+<input id="loginPassword" type="password" placeholder="Password">
+
+<button onclick="login()">Login</button>
+
+</div>
+
+<div id="newsSection" class="hidden">
+
+<h2>Latest News</h2>
+
+<div id="news"></div>
+
+</div>
+
+</div>
 
 <script>
 
-const apiKey = "1020c7f732b74f6bb1b788221bc8cc99";
-let points = 0;
+const apiKey="1020c7f732b74f6bb1b788221bc8cc99"
+
+let user=JSON.parse(localStorage.getItem("user"))
+
+if(user){
+
+document.getElementById("auth").style.display="none"
+document.getElementById("newsSection").classList.remove("hidden")
+document.getElementById("points").innerText=user.points
+
+loadNews()
+
+}
+
+function signup(){
+
+let email=document.getElementById("signupEmail").value
+let password=document.getElementById("signupPassword").value
+
+let user={
+email:email,
+password:password,
+points:0
+}
+
+localStorage.setItem("user",JSON.stringify(user))
+
+alert("Account created!")
+
+}
+
+function login(){
+
+let email=document.getElementById("loginEmail").value
+let password=document.getElementById("loginPassword").value
+
+let user=JSON.parse(localStorage.getItem("user"))
+
+if(user && user.email==email && user.password==password){
+
+alert("Login success")
+
+document.getElementById("auth").style.display="none"
+document.getElementById("newsSection").classList.remove("hidden")
+
+document.getElementById("points").innerText=user.points
+
+loadNews()
+
+}else{
+
+alert("Wrong login")
+
+}
+
+}
 
 async function loadNews(){
 
-const url = `https://newsapi.org/v2/top-headlines?country=in&apiKey=${apiKey}`;
+let res=await fetch(`https://newsapi.org/v2/top-headlines?country=in&apiKey=${apiKey}`)
 
-const res = await fetch(url);
-const data = await res.json();
+let data=await res.json()
 
-const container = document.getElementById("news-container");
+let container=document.getElementById("news")
 
-data.articles.forEach(article => {
+data.articles.forEach(article=>{
 
-const card = document.createElement("div");
-card.className="card";
+let card=document.createElement("div")
 
-card.innerHTML = `
-<img src="${article.urlToImage || ''}">
+card.className="card"
+
+card.innerHTML=`
+
 <h3>${article.title}</h3>
-<p>${article.description || ''}</p>
+
+<p>${article.description || ""}</p>
+
 <a href="${article.url}" target="_blank">
+
 <button onclick="earn()">Read & Earn</button>
+
 </a>
-`;
 
-container.appendChild(card);
+`
 
-});
+container.appendChild(card)
+
+})
 
 }
 
 function earn(){
-points += 5;
-document.getElementById("points").innerText = points;
-}
 
-loadNews();
+let user=JSON.parse(localStorage.getItem("user"))
+
+user.points+=5
+
+localStorage.setItem("user",JSON.stringify(user))
+
+document.getElementById("points").innerText=user.points
+
+alert("You earned 5 points!")
+
+}
 
 </script>
 
