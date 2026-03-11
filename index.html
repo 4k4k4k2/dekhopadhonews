@@ -2,100 +2,139 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>DekhoPadho News - Earn Rewards</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DekhoPadho News</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 
 <style>
 
 body{
-font-family:system-ui;
+font-family:'Poppins',sans-serif;
 margin:0;
-background:#f2f2f2;
+background:#f5f7fb;
 }
+
+/* HEADER */
 
 header{
-background:#ff0033;
+background:linear-gradient(135deg,#ff004c,#ff6a00);
 color:white;
-padding:14px;
+padding:16px;
 font-size:22px;
-font-weight:bold;
+font-weight:600;
 text-align:center;
+box-shadow:0 4px 10px rgba(0,0,0,0.15);
 }
 
+/* EARNING BANNER */
+
 .earn-banner{
-background:linear-gradient(90deg,#ff0033,#ff6a00);
+background:linear-gradient(90deg,#ff6a00,#ff004c);
 color:white;
 text-align:center;
-padding:10px;
+padding:8px;
 font-size:14px;
-font-weight:bold;
 }
+
+/* TOPBAR */
 
 .topbar{
 display:flex;
 justify-content:space-between;
-padding:10px;
-background:white;
 align-items:center;
+padding:10px 14px;
+background:white;
+box-shadow:0 2px 8px rgba(0,0,0,0.06);
 }
 
 .points{
-font-weight:bold;
-color:#ff0033;
+font-weight:600;
+font-size:17px;
+color:#ff004c;
 }
+
+/* BUTTONS */
 
 button{
-cursor:pointer;
 border:none;
-border-radius:6px;
-padding:8px 12px;
+border-radius:8px;
+padding:8px 14px;
+font-weight:500;
+cursor:pointer;
+transition:0.3s;
 }
 
-.bonus{background:#ffaa00;color:white}
-.withdraw{background:#2ecc71;color:white}
+.bonus{
+background:#ff9f00;
+color:white;
+}
+
+.withdraw{
+background:#27ae60;
+color:white;
+}
+
+button:hover{
+transform:scale(1.05);
+}
+
+/* REWARD BOX */
 
 .reward-box{
+margin:12px;
+padding:16px;
+border-radius:14px;
 background:white;
-margin:10px;
-padding:12px;
-border-radius:10px;
-box-shadow:0 2px 8px rgba(0,0,0,0.1);
+box-shadow:0 6px 16px rgba(0,0,0,0.08);
 text-align:center;
-font-size:14px;
 }
+
+/* CATEGORY BAR */
 
 .categories{
 display:flex;
-overflow:auto;
-background:white;
-padding:8px;
+overflow-x:auto;
+padding:10px;
 gap:8px;
+background:white;
 }
 
 .cat{
-background:#eee;
-padding:6px 12px;
+padding:6px 14px;
 border-radius:20px;
-white-space:nowrap;
-font-size:14px;
+background:#eee;
+font-size:13px;
 cursor:pointer;
 }
 
 .cat.active{
-background:#ff0033;
+background:#ff004c;
 color:white;
 }
 
+/* NEWS GRID */
+
 #news{
-padding:10px;
+padding:12px;
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+gap:14px;
 }
+
+/* CARD */
 
 .card{
 background:white;
-margin-bottom:12px;
-border-radius:10px;
+border-radius:14px;
 overflow:hidden;
-box-shadow:0 2px 6px rgba(0,0,0,0.1);
+box-shadow:0 6px 14px rgba(0,0,0,0.08);
+transition:0.3s;
+}
+
+.card:hover{
+transform:translateY(-4px);
+box-shadow:0 12px 22px rgba(0,0,0,0.12);
 }
 
 .card img{
@@ -105,29 +144,48 @@ object-fit:cover;
 }
 
 .card h3{
-padding:10px;
+padding:12px;
 margin:0;
-font-size:17px;
+font-size:16px;
 }
 
 .card p{
-padding:0 10px 10px;
-color:#555;
-font-size:14px;
+padding:0 12px 12px;
+font-size:13px;
+color:#666;
 }
 
+/* READ BUTTON */
+
 .read{
-background:#ff0033;
+background:linear-gradient(135deg,#ff004c,#ff6a00);
 color:white;
 width:100%;
 padding:10px;
-font-weight:bold;
+font-weight:600;
+border:none;
 }
+
+/* FOOTER */
 
 .footer{
 text-align:center;
-padding:15px;
+padding:16px;
 color:#888;
+}
+
+/* TOAST */
+
+.toast{
+position:fixed;
+bottom:20px;
+left:50%;
+transform:translateX(-50%);
+background:#ff004c;
+color:white;
+padding:10px 18px;
+border-radius:8px;
+box-shadow:0 4px 12px rgba(0,0,0,0.2);
 }
 
 </style>
@@ -135,12 +193,10 @@ color:#888;
 
 <body>
 
-<header>
-📰 DekhoPadho News
-</header>
+<header>📰 DekhoPadho News</header>
 
 <div class="earn-banner">
-💰 Read News & Earn Rewards | 🎁 Daily Bonus 50 Points | 🏦 10,000 Points = ₹10 Paytm
+💰 Read News & Earn | 🎁 Daily Bonus 50 | 🏦 10,000 Points = ₹10 Paytm
 </div>
 
 <div class="topbar">
@@ -157,21 +213,16 @@ color:#888;
 </div>
 
 <div class="reward-box">
-🪙 <b>Reward Wallet</b><br>
-⭐ Earn 5 points per article<br>
-🎁 Daily Bonus: 50 Points<br>
-🏦 Withdraw 10,000 Points = ₹10 Paytm
+🪙 Earn 5 points per article <br>
+🎁 Daily Bonus 50 points <br>
+🏦 Withdraw 10,000 points = ₹10 Paytm
 </div>
 
 <div class="categories" id="cats"></div>
 
-<div id="news">
-Loading news...
-</div>
+<div id="news">Loading news...</div>
 
-<div class="footer">
-📖 Read • Earn • Withdraw
-</div>
+<div class="footer">Read • Earn • Withdraw</div>
 
 <script>
 
@@ -187,15 +238,24 @@ let points=localStorage.getItem("points")||0
 
 document.getElementById("points").innerText=points
 
+function toast(msg){
+
+let t=document.createElement("div")
+t.className="toast"
+t.innerText=msg
+
+document.body.appendChild(t)
+
+setTimeout(()=>t.remove(),2000)
+
+}
 
 function renderCategories(){
 
 let html=""
 
 categories.forEach(c=>{
-
 html+=`<div class="cat ${c==current?'active':''}" onclick="loadNews('${c}')">${c}</div>`
-
 })
 
 document.getElementById("cats").innerHTML=html
@@ -203,7 +263,6 @@ document.getElementById("cats").innerHTML=html
 }
 
 renderCategories()
-
 
 function addPoints(){
 
@@ -213,10 +272,9 @@ localStorage.setItem("points",points)
 
 document.getElementById("points").innerText=points
 
-alert("🎉 You earned 5 points!")
+toast("🎉 +5 Points Earned!")
 
 }
-
 
 function readNews(url){
 
@@ -225,7 +283,6 @@ addPoints()
 window.open(url,"_blank")
 
 }
-
 
 function loadNews(cat){
 
@@ -277,7 +334,6 @@ document.getElementById("news").innerHTML=html
 
 loadNews(current)
 
-
 /* DAILY BONUS */
 
 function dailyBonus(){
@@ -288,7 +344,7 @@ let today=new Date().toDateString()
 
 if(last==today){
 
-alert("⚠️ Daily bonus already claimed today")
+toast("⚠️ Bonus already claimed")
 
 return
 
@@ -302,10 +358,9 @@ localStorage.setItem("bonusDate",today)
 
 document.getElementById("points").innerText=points
 
-alert("🎁 You received 50 points!")
+toast("🎁 +50 Bonus Points")
 
 }
-
 
 /* WITHDRAW */
 
@@ -313,7 +368,7 @@ function withdraw(){
 
 if(points<10000){
 
-alert("⚠️ Need 10000 points to withdraw ₹10 Paytm")
+toast("Need 10000 points")
 
 return
 
@@ -329,10 +384,9 @@ localStorage.setItem("points",points)
 
 document.getElementById("points").innerText=points
 
-alert("✅ Withdraw request sent for ₹10 to "+upi)
+toast("Withdraw request sent")
 
 }
-
 
 /* AUTO REFRESH NEWS */
 
