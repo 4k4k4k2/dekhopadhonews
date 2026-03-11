@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>News & Earn</title>
+<title>News & Earn Platform</title>
 
 <style>
 
@@ -17,6 +17,25 @@ background:#111;
 color:white;
 text-align:center;
 padding:20px;
+}
+
+#auth{
+text-align:center;
+padding:20px;
+}
+
+input{
+padding:10px;
+margin:5px;
+}
+
+button{
+padding:10px 15px;
+background:#007bff;
+border:none;
+color:white;
+border-radius:5px;
+cursor:pointer;
 }
 
 .points{
@@ -59,29 +78,58 @@ padding:0 10px 10px;
 
 .card button{
 margin:10px;
-padding:8px 12px;
 background:#28a745;
-border:none;
-color:white;
-border-radius:5px;
-cursor:pointer;
+}
+
+#dashboard{
+padding:20px;
+text-align:center;
+}
+
+.hidden{
+display:none;
 }
 
 </style>
+
 </head>
 
 <body>
 
 <header>
-
-<h1>📰 News & Earn Website</h1>
-
-<input id="search" placeholder="Search news..." style="padding:10px;width:250px">
-
+<h1>📰 News & Earn Platform</h1>
 </header>
 
 <div class="points">
 Points: <span id="points">0</span>
+</div>
+
+<div id="auth">
+
+<h2>Signup</h2>
+
+<input id="signupEmail" placeholder="Email">
+<input id="signupPass" type="password" placeholder="Password">
+
+<button onclick="signup()">Signup</button>
+
+<h2>Login</h2>
+
+<input id="loginEmail" placeholder="Email">
+<input id="loginPass" type="password">
+
+<button onclick="login()">Login</button>
+
+</div>
+
+<div id="dashboard" class="hidden">
+
+<h2>Welcome <span id="userEmail"></span></h2>
+
+<input id="search" placeholder="Search news..." style="padding:10px;width:250px">
+
+<button onclick="dailyReward()">Daily Reward</button>
+
 </div>
 
 <div id="news"></div>
@@ -90,15 +138,70 @@ Points: <span id="points">0</span>
 
 const apiKey="99b65368f09edc9972c44f8b9daf6106"
 
-let points = localStorage.getItem("points") || 0
-document.getElementById("points").innerText = points
+let user=JSON.parse(localStorage.getItem("user"))
+
+let points=localStorage.getItem("points") || 0
+
+document.getElementById("points").innerText=points
+
+if(user){
+
+showDashboard()
+
+}
+
+function signup(){
+
+let email=document.getElementById("signupEmail").value
+let pass=document.getElementById("signupPass").value
+
+let user={email,pass}
+
+localStorage.setItem("user",JSON.stringify(user))
+
+alert("Account created!")
+
+}
+
+function login(){
+
+let email=document.getElementById("loginEmail").value
+let pass=document.getElementById("loginPass").value
+
+let user=JSON.parse(localStorage.getItem("user"))
+
+if(user && user.email==email && user.pass==pass){
+
+showDashboard()
+
+}else{
+
+alert("Wrong login")
+
+}
+
+}
+
+function showDashboard(){
+
+document.getElementById("auth").style.display="none"
+document.getElementById("dashboard").classList.remove("hidden")
+
+let user=JSON.parse(localStorage.getItem("user"))
+
+document.getElementById("userEmail").innerText=user.email
+
+loadNews()
+
+}
 
 async function loadNews(){
 
 const url=`https://gnews.io/api/v4/top-headlines?lang=en&country=in&max=20&apikey=${apiKey}`
 
-const res = await fetch(url)
-const data = await res.json()
+const res=await fetch(url)
+
+const data=await res.json()
 
 displayNews(data.articles)
 
@@ -164,7 +267,17 @@ document.getElementById("points").innerText=points
 
 }
 
-loadNews()
+function dailyReward(){
+
+points=parseInt(points)+20
+
+localStorage.setItem("points",points)
+
+document.getElementById("points").innerText=points
+
+alert("Daily reward +20 points!")
+
+}
 
 </script>
 
