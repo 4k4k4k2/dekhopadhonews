@@ -5,7 +5,6 @@
 <title>News & Earn</title>
 
 <style>
-
 body{
 font-family:Arial;
 margin:0;
@@ -19,36 +18,27 @@ padding:15px;
 text-align:center;
 }
 
-.container{
+#news{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+gap:20px;
 padding:20px;
-}
-
-input{
-padding:10px;
-margin:5px;
-}
-
-button{
-padding:10px 15px;
-background:#007bff;
-border:none;
-color:white;
-cursor:pointer;
-border-radius:5px;
 }
 
 .card{
 background:white;
 padding:15px;
-margin:10px;
 border-radius:8px;
 box-shadow:0 2px 5px rgba(0,0,0,0.2);
 }
 
-#news{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
-gap:20px;
+button{
+background:#007bff;
+color:white;
+border:none;
+padding:8px 12px;
+border-radius:5px;
+cursor:pointer;
 }
 
 .points{
@@ -60,11 +50,6 @@ color:white;
 padding:10px;
 border-radius:5px;
 }
-
-.hidden{
-display:none;
-}
-
 </style>
 </head>
 
@@ -78,106 +63,30 @@ display:none;
 Points: <span id="points">0</span>
 </div>
 
-<div class="container">
-
-<div id="auth">
-
-<h2>Signup</h2>
-
-<input id="signupEmail" placeholder="Email">
-<input id="signupPassword" type="password" placeholder="Password">
-
-<button onclick="signup()">Signup</button>
-
-<h2>Login</h2>
-
-<input id="loginEmail" placeholder="Email">
-<input id="loginPassword" type="password" placeholder="Password">
-
-<button onclick="login()">Login</button>
-
-</div>
-
-<div id="newsSection" class="hidden">
-
-<h2>Latest News</h2>
+<h2 style="padding-left:20px;">Latest News</h2>
 
 <div id="news"></div>
-
-</div>
-
-</div>
 
 <script>
 
 const apiKey="1020c7f732b74f6bb1b788221bc8cc99"
 
-let user=JSON.parse(localStorage.getItem("user"))
-
-if(user){
-
-document.getElementById("auth").style.display="none"
-document.getElementById("newsSection").classList.remove("hidden")
-document.getElementById("points").innerText=user.points
-
-loadNews()
-
-}
-
-function signup(){
-
-let email=document.getElementById("signupEmail").value
-let password=document.getElementById("signupPassword").value
-
-let user={
-email:email,
-password:password,
-points:0
-}
-
-localStorage.setItem("user",JSON.stringify(user))
-
-alert("Account created!")
-
-}
-
-function login(){
-
-let email=document.getElementById("loginEmail").value
-let password=document.getElementById("loginPassword").value
-
-let user=JSON.parse(localStorage.getItem("user"))
-
-if(user && user.email==email && user.password==password){
-
-alert("Login success")
-
-document.getElementById("auth").style.display="none"
-document.getElementById("newsSection").classList.remove("hidden")
-
-document.getElementById("points").innerText=user.points
-
-loadNews()
-
-}else{
-
-alert("Wrong login")
-
-}
-
-}
+let points=localStorage.getItem("points") || 0
+document.getElementById("points").innerText=points
 
 async function loadNews(){
 
-let res=await fetch(`https://newsapi.org/v2/top-headlines?country=in&apiKey=${apiKey}`)
+const url=`https://corsproxy.io/?https://newsapi.org/v2/top-headlines?country=in&apiKey=${apiKey}`
 
-let data=await res.json()
+const res=await fetch(url)
 
-let container=document.getElementById("news")
+const data=await res.json()
+
+const container=document.getElementById("news")
 
 data.articles.forEach(article=>{
 
-let card=document.createElement("div")
+const card=document.createElement("div")
 
 card.className="card"
 
@@ -203,17 +112,15 @@ container.appendChild(card)
 
 function earn(){
 
-let user=JSON.parse(localStorage.getItem("user"))
+points=parseInt(points)+5
 
-user.points+=5
+localStorage.setItem("points",points)
 
-localStorage.setItem("user",JSON.stringify(user))
-
-document.getElementById("points").innerText=user.points
-
-alert("You earned 5 points!")
+document.getElementById("points").innerText=points
 
 }
+
+loadNews()
 
 </script>
 
