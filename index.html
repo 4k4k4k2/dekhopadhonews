@@ -40,7 +40,6 @@ border-radius:10px;
 margin-bottom:15px;
 overflow:hidden;
 box-shadow:0 3px 8px rgba(0,0,0,0.1);
-cursor:pointer;
 }
 
 .card img{
@@ -51,12 +50,11 @@ object-fit:cover;
 
 .card h3{
 padding:10px;
-font-size:18px;
 margin:0;
 }
 
 .card p{
-padding:0 10px 10px 10px;
+padding:0 10px 10px;
 color:#555;
 font-size:14px;
 }
@@ -67,12 +65,8 @@ color:white;
 border:none;
 padding:10px;
 width:100%;
-font-size:16px;
 cursor:pointer;
-}
-
-.read:hover{
-background:#c4001d;
+font-size:16px;
 }
 
 </style>
@@ -95,58 +89,61 @@ Loading news...
 <script>
 
 const API_KEY = "99b65368f09edc9972c44f8b9daf6106";
-const URL = `https://gnews.io/api/v4/top-headlines?country=in&lang=en&apikey=${API_KEY}`;
+
+const url = "https://gnews.io/api/v4/top-headlines?country=in&lang=en&apikey=" + API_KEY;
+
+// CORS FIX
+const API = "https://api.allorigins.win/raw?url=" + encodeURIComponent(url);
 
 let points = localStorage.getItem("points") || 0;
 document.getElementById("points").innerText = points;
 
 function addPoints(){
-
 points = parseInt(points) + 5;
-
-localStorage.setItem("points", points);
-
+localStorage.setItem("points",points);
 document.getElementById("points").innerText = points;
-
 }
 
-fetch(URL)
+function readNews(link){
+addPoints();
+window.open(link,"_blank");
+}
+
+fetch(API)
 .then(res=>res.json())
 .then(data=>{
 
 let html="";
 
-data.articles.forEach((news,i)=>{
+data.articles.forEach(n=>{
 
-html += `
+html+=`
+
 <div class="card">
 
-<img src="${news.image}" onerror="this.src='https://via.placeholder.com/400x200'">
+<img src="${n.image || 'https://via.placeholder.com/400x200'}">
 
-<h3>${news.title}</h3>
+<h3>${n.title}</h3>
 
-<p>${news.description || ""}</p>
+<p>${n.description || ""}</p>
 
-<button class="read" onclick="readNews('${news.url}')">
+<button class="read" onclick="readNews('${n.url}')">
 Read & Earn +5
 </button>
 
 </div>
+
 `;
 
 });
 
 document.getElementById("news").innerHTML = html;
 
+})
+.catch(err=>{
+document.getElementById("news").innerHTML="Failed to load news.";
+console.log(err);
 });
-
-function readNews(url){
-
-addPoints();
-
-window.open(url,"_blank");
-
-}
 
 </script>
 
